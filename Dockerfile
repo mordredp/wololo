@@ -1,8 +1,4 @@
-# docker build -t wololo .
 FROM golang:1.20-alpine AS builder
-
-LABEL org.label-schema.vcs-url="https://github.com/mordredp/wololo" \
-      org.label-schema.url="https://github.com/mordredp/wololo/blob/master/README.md"
 
 RUN mkdir /wololo
 WORKDIR /wololo
@@ -16,7 +12,7 @@ RUN apk update && apk upgrade && \
     go get -d github.com/ilyakaznacheev/cleanenv
 
 # Build Source Files
-RUN go build -o wololo . 
+RUN go build -o wololo .
 
 # Create 2nd Stage final image
 FROM alpine
@@ -27,8 +23,4 @@ COPY --from=builder /wololo/devices.json .
 COPY --from=builder /wololo/config.json .
 COPY --from=builder /wololo/static ./static
 
-ARG wololoPORT=8089
-
 CMD ["/wololo/wololo"]
-
-EXPOSE ${WOLOLOPORT}

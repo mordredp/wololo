@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+
+  wololo:
+    build: .
+    image: wololo:latest
+
+    container_name: wololo
+    restart: unless-stopped
+
+    environment:
+      WOLOLOIP: "0.0.0.0"
+      WOLOLOPORT: "8089"
+      WOLWEBVDIR: "/"
+      WOLWEBBCASTIP: "192.168.1.255:9"
+
+    volumes:
+      - ./devices.json:/wololo/devices.json
+
+    network_mode: host
