@@ -7,6 +7,8 @@ Based on Samer Dhoot's project https://github.com/sameerdhoot/wolweb.
 
 A GoLang based HTTP server which will send a Wake-on-lan package (magic packet) on local network. The request can be send using web interface or directly using an HTTP request with the mapped device name in the URL.
 
+I needed the webserver to support binding to a specific IP for usage with a reverse proxy. I also plan to add LDAP support for access to the web interface and API.
+
 ## Bootstrap UI with JS Grid for editing data
 
 ![Screenshot](wolweb_ui.png)
