@@ -84,7 +84,7 @@ func setupWebServer() {
 	router.HandleFunc(basePath+"/health", checkHealth).Methods("GET")
 
 	// Setup Webserver
-	httpListen := ":" + strconv.Itoa(appConfig.Port)
+	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
 	log.Printf("Startup Webserver on \"%s\"", httpListen)
 
 	srv := &http.Server{

@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-//restWakeUpWithDeviceName - REST Handler for Processing URLS /virtualdirectory/apipath/<deviceName>
+// restWakeUpWithDeviceName - REST Handler for Processing URLS /virtualdirectory/apipath/<deviceName>
 func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
@@ -49,7 +49,7 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		if result.Success == false && result.ErrorObject == nil {
+		if !result.Success && result.ErrorObject == nil {
 			// We could not find the Devicename
 			w.WriteHeader(http.StatusNotFound)
 			result.Message = fmt.Sprintf("Device name %s could not be found", deviceName)

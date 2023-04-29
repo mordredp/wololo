@@ -3,19 +3,9 @@
 
 # Web interface for sending Wake-on-lan (magic packet)
 
-A GoLang based HTTP server which will send a Wake-on-lan package (magic packet) on local network. The request can be send using web interface or directly using HTTP request with mapped device name in the URL. The only computing device I have running 24x7 is handy-dandy Raspberry Pi 4 (4gb) with docker containers. All other devices like server, laptop and NAS as powered only when I need them. I needed a way to easily turn them on specifically when trying to automate things like nightly builds.
+Based on Samer Dhoot's project https://github.com/sameerdhoot/wolweb.
 
-I use this application behind NGINX web proxy which is secured with HTTPS certificate. It has no authentication, but it is home network and the reason I built this was to have no authentication. I have the same functionality provided in my home router, but I have to login and go through several clicks. Also, this app runs as docker image so even if it is hacked, it reduces the attack surface.
-
-I have bookmarked direct link to device(s) on my browsers to wake them using single HTTP call for ease of access.
-
-Things I use this for:
-- to wake-up my home laptop remotely. I use my home laptop remotely over RDP.
-- this is also helpful in building routines which will wake up my server and nightly builds and when it is all done, go back to sleep. I don't keep my home lab running 24x7 as it is a waste of energy.
-- to turn on my NAS and laptop to start the weekly backup from laptop to NAS.
-- to turn on NAS quickly when we are watching movies stored on NAS.
-
-> It was tricky to configure the wol feature on my Dell Laptop. NAS and Dell servers were easy to configure. Follow this article for [Dell laptop](https://www.dell.com/support/article/en-us/sln305365/how-to-setup-wake-on-lan-wol-on-your-dell-system?lang=en) 
+A GoLang based HTTP server which will send a Wake-on-lan package (magic packet) on local network. The request can be send using web interface or directly using an HTTP request with the mapped device name in the URL.
 
 ## Bootstrap UI with JS Grid for editing data
 
@@ -41,8 +31,9 @@ The application will use the following default values if they are not explicitly
 
 | Config | Description | Default
 | --- | --- | --- |
+| ListenIP | Define the IP on which the webserver will listen | **0.0.0.0** |
 | Port | Define the port on which the webserver will listen | **8089**
-| Virtual Directory | A virtual directory to mount this application under | **/wolweb**
+| Virtual Directory | A virtual directory to mount this application under | **/**
 | Broadcast IP and Port | This is broadcast IP address and port for the local network. *Please include the port :9* | **192.168.1.255:9**
 
 You can override the default application configuration by using a config file or by setting environment variables. The application will first load values from config file and look for environment variables and overwrites values from the file with the values which were found in the environment.
@@ -51,6 +42,7 @@ You can override the default application configuration by using a config file or
 
 ```json
 {
+    "ip": "0.0.0.0",
     "port": 8089,
     "vdir":"/wolweb",
     "bcastip":"192.168.1.255:9"
@@ -62,9 +54,10 @@ You can override the default application configuration by using a config file or
 
 | Variable Name | Description
 | --- | --- |
-| WOLWEBPORT | Override for default HTTP port
-| WOLWEBVDIR | Override for default virtual directory
-| WOLWEBBCASTIP | Override for broadcast IP address and port
+| WOLOLOIP | Override for default HTTP listening IP
+| WOLOLOPORT | Override for default HTTP port
+| WOLOLOVDIR | Override for default virtual directory
+| WOLOLOBCASTIP | Override for broadcast IP address and port
 
 ## Devices (targets) - devices.json format
 ```json
@@ -102,19 +95,19 @@ docker-compose up -d
 
 ### Build and run manually
 ```bash
-docker build -t wolweb .
-docker run --network host -it wolweb
+docker build -t wololo .
+docker run --network host -it wololo
 ```
 
 ### Extract the compiled application from an image
 ```bash
-docker cp wolweb:/wolweb - > wolweb.gz
+docker cp wololo:/wololo - > wololo.gz
 ```
 
 ## Build on Windows
 I use VS Code with Go extension. To build this project on Windows:
 ```powershell
-go build -o wolweb.exe .
+go build -o wololo.exe .
 ```
 
 ## Build for ASUS Routers (ARM v5)
@@ -124,19 +117,10 @@ I initially thought of running this application on my router, so I needed to bui
 ```
 Copy the file over to router and make it executable.
 ```sh
-chmod +x wolweb
+chmod +x wololo
 ```
-
-To see detailed instructions on how to run this application as service on ASUS router with custom firmware [asuswrt-merlin](https://www.asuswrt-merlin.net/) see this [Wiki guide](https://github.com/sameerdhoot/wolweb/wiki/Run-on-asuswrt-merlin)
-## NGiNX Config
-
-I am already using NGiNX as web-proxy for accessing multiple services (web interfaces) from single IP and port 443 using free Let's Encrypt HTTPS certificate. For accessing this service, I just added the following configuration under my existing server node.
-```
-	location /wolweb {
-		proxy_pass http://192.168.1.4:8089/wolweb;
-	}
-```
-> This is also the reason why I have an option in this application to use virtual directory **/wolweb** as I can easily map all requests for this application. My / is already occupied for other web application in my network.
 
 ## Credits
+Thank you you to Sameer Dhoot's project https://github.com/sameerdhoot/wolweb for providing the framework which I modified a little to work within constraints of environment.
+
 Thank you to David Baumann's project https://github.com/dabondi/go-rest-wol for providing the framework which I modified a little to work within constraints of environment.
