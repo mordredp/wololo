@@ -111,17 +111,6 @@ I use VS Code with Go extension. To build this project on Windows:
 ```powershell
 go build -o wololo.exe .
 ```
-
-## Build for ASUS Routers (ARM v5)
-I initially thought of running this application on my router, so I needed to build the application without having to install build tool on my router. I use the following **PowerShell** one liner to build targeting the ARM v5 platform on my Windows machine with VS Code:
-```powershell
- $Env:GOOS = "linux"; $Env:GOARCH = "arm"; $Env:GOARM = "5"; go build -o wolweb .
-```
-Copy the file over to router and make it executable.
-```sh
-chmod +x wololo
-```
-
 ## Credits
 Thank you you to Sameer Dhoot's project https://github.com/sameerdhoot/wolweb for providing the framework which I modified a little to work within constraints of environment.
 
