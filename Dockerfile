@@ -1,5 +1,5 @@
 # docker build -t wololo .
-FROM golang:1.14-alpine AS builder
+FROM golang:1.20-alpine AS builder
 
 LABEL org.label-schema.vcs-url="https://github.com/mordredp/wololo" \
       org.label-schema.url="https://github.com/mordredp/wololo/blob/master/README.md"
