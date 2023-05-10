@@ -6,11 +6,12 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"time"
 
-	"github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/ilyakaznacheev/cleanenv"
+
+	"github.com/mordredp/wololo/auth"
 )
 
 // Global variables
@@ -25,8 +26,21 @@ func main() {
 
 	loadData()
 
-	setupWebServer()
+	router := chi.NewRouter()
 
+	router.Use(middleware.Logger)
+	router.Use(auth.Identify)
+	router.Use(auth.Clean)
+
+	router.Get("/", renderHomePage)
+	router.Get("/logout", auth.Logout)
+	router.Post("/login", auth.Login)
+	router.Get("/refresh", auth.Refresh)
+
+	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
+	log.Printf("Startup Webserver on \"%s\"", httpListen)
+
+	log.Fatal(http.ListenAndServe(httpListen, router))
 }
 
 func setWorkingDir() {
@@ -48,53 +62,5 @@ func loadConfig() {
 		log.Fatalf("Error loading config.json file. \"%s\"", err)
 	}
 	log.Printf("Application configuratrion loaded from config.json")
-
-}
-
-func setupWebServer() {
-
-	// Init HTTP Router - mux
-	router := mux.NewRouter()
-
-	// Define base path. Keep it empty when VDir is just "/" to avoid redirect loops
-	// Add trailing slash if basePath is not empty
-	basePath := ""
-	if appConfig.VDir != "/" {
-		basePath = appConfig.VDir
-		router.HandleFunc(basePath, redirectToHomePage).Methods("GET")
-	}
-
-	// map directory to server static files
-	router.PathPrefix(basePath + "/static/").Handler(http.StripPrefix(basePath+"/static/", http.FileServer(http.Dir("./static"))))
-
-	// Define Home Route
-	router.HandleFunc(basePath+"/", renderHomePage).Methods("GET")
-
-	// Define Wakeup functions with a Device Name
-	router.HandleFunc(basePath+"/wake/{deviceName}", wakeUpWithDeviceName).Methods("GET")
-	router.HandleFunc(basePath+"/wake/{deviceName}/", wakeUpWithDeviceName).Methods("GET")
-
-	// Define Data save Api function
-	router.HandleFunc(basePath+"/data/save", saveData).Methods("POST")
-
-	// Define Data get Api function
-	router.HandleFunc(basePath+"/data/get", getData).Methods("GET")
-
-	// Define health check function
-	router.HandleFunc(basePath+"/health", checkHealth).Methods("GET")
-
-	// Setup Webserver
-	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
-	log.Printf("Startup Webserver on \"%s\"", httpListen)
-
-	srv := &http.Server{
-		Handler: handlers.RecoveryHandler(handlers.PrintRecoveryStack(true))(router),
-		Addr:    httpListen,
-		// Good practice: enforce timeouts for servers you create!
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-	}
-
-	log.Fatal(srv.ListenAndServe())
 
 }

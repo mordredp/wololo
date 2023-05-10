@@ -23,6 +23,5 @@ type AppData struct {
 type AppConfig struct {
 	IP      string `json:"ip" env:"WOLOLOIP" env-default:"0.0.0.0"`
 	Port    int    `json:"port" env:"WOLOLOPORT" env-default:"8089"`
-	VDir    string `json:"vdir" env:"WOLOLOVDIR" env-default:"/wolweb"`
 	BCastIP string `json:"bcastip" env:"WOLOLOBCASTIP" env-default:"192.168.1.255:9"`
 }
