@@ -76,7 +76,7 @@ func GetIPFromInterface(iface string) (*net.UDPAddr, error) {
 	if err != nil {
 		return nil, err
 	} else if len(addrs) <= 0 {
-		return nil, errors.New("No address associated with interface " + iface)
+		return nil, errors.New("no address associated with interface " + iface)
 	}
 
 	// Validate that one of the addr's is a valid network IP address
@@ -91,7 +91,7 @@ func GetIPFromInterface(iface string) (*net.UDPAddr, error) {
 			}
 		}
 	}
-	return nil, errors.New("Unable to find valid IP addr for interface " + iface)
+	return nil, errors.New("unable to find valid IP addr for interface " + iface)
 }
 
 // SendMagicPacket to send a magic packet to a given mac address, and optionally
@@ -106,13 +106,12 @@ func SendMagicPacket(macAddr, bcastAddr, iface string) error {
 	// Fill our byte buffer with the bytes in our MagicPacket
 	var buf bytes.Buffer
 	binary.Write(&buf, binary.BigEndian, magicPacket)
-	log.Printf("Attempting to send a magic packet to MAC %s\n", macAddr)
-	log.Printf("... Broadcasting to: %s\n", bcastAddr)
+	log.Printf("sending magic packet to MAC %s on %s", macAddr, bcastAddr)
 
 	// Get a UDPAddr to send the broadcast to
 	udpAddr, err := net.ResolveUDPAddr("udp", bcastAddr)
 	if err != nil {
-		log.Printf("Unable to get a UDP address for %s\n", bcastAddr)
+		log.Printf("unable to get a UDP address for %s", bcastAddr)
 		return err
 	}
 
@@ -122,15 +121,15 @@ func SendMagicPacket(macAddr, bcastAddr, iface string) error {
 		var err error
 		localAddr, err = GetIPFromInterface(iface)
 		if err != nil {
-			log.Printf("ERROR: %s\n", err.Error())
-			return errors.New("Unable to get address for interface " + iface)
+			log.Printf("ERROR: %s", err.Error())
+			return errors.New("unable to get address for interface " + iface)
 		}
 	}
 
 	// Open a UDP connection, and defer it's cleanup
 	connection, err := net.DialUDP("udp", localAddr, udpAddr)
 	if err != nil {
-		log.Printf("ERROR: %s\n", err.Error())
+		log.Printf("ERROR: %s", err.Error())
 		return errors.New("unable to dial UDP address")
 	}
 	defer connection.Close()
@@ -138,10 +137,10 @@ func SendMagicPacket(macAddr, bcastAddr, iface string) error {
 	// Write the bytes of the MagicPacket to the connection
 	bytesWritten, err := connection.Write(buf.Bytes())
 	if err != nil {
-		log.Printf("Unable to write packet to connection\n")
+		log.Printf("unable to write packet to connection")
 		return err
 	} else if bytesWritten != 102 {
-		log.Printf("Warning: %d bytes written, %d expected!\n", bytesWritten, 102)
+		log.Printf("warning: %d bytes written, %d expected!", bytesWritten, 102)
 	}
 
 	return nil

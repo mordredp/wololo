@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
 // restWakeUpWithDeviceName - REST Handler for Processing URLS /virtualdirectory/apipath/<deviceName>
@@ -15,15 +15,16 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	vars := mux.Vars(r)
-	deviceName := vars["deviceName"]
+	//vars := mux.Vars(r)
+	//deviceName := vars["deviceName"]
+	deviceName := chi.URLParam(r, "deviceName")
 
 	var result HTTPResponseObject
 	result.Success = false
 
 	// Ensure deviceName is not empty
 	if deviceName == "" {
-		result.Message = "Empty Device name is not allowed"
+		result.Message = "device name not specified"
 		result.ErrorObject = nil
 		w.WriteHeader(http.StatusBadRequest)
 		// Devicename is empty
@@ -38,12 +39,12 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 					// We got an internal Error on SendMagicPacket
 					w.WriteHeader(http.StatusInternalServerError)
 					result.Success = false
-					result.Message = "Internal error on Sending the Magic Packet"
+					result.Message = "internal error on sending the the magic packet"
 					result.ErrorObject = err
 				} else {
 					// Horray we send the WOL Packet succesfully
 					result.Success = true
-					result.Message = fmt.Sprintf("Sent magic packet to device %s with Mac %s on Broadcast IP %s", c.Name, c.Mac, c.BroadcastIP)
+					result.Message = fmt.Sprintf("sent magic packet to device %s with MAC %s on broadcast IP %s", c.Name, c.Mac, c.BroadcastIP)
 					result.ErrorObject = nil
 				}
 			}
@@ -52,7 +53,7 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 		if !result.Success && result.ErrorObject == nil {
 			// We could not find the Devicename
 			w.WriteHeader(http.StatusNotFound)
-			result.Message = fmt.Sprintf("Device name %s could not be found", deviceName)
+			result.Message = fmt.Sprintf("device name %s could not be found", deviceName)
 		}
 	}
 	json.NewEncoder(w).Encode(result)

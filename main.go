@@ -33,13 +33,27 @@ func main() {
 	router.Use(auth.Clean)
 
 	router.Get("/", renderHomePage)
-	router.Get("/logout", auth.Logout)
+
 	router.Post("/login", auth.Login)
+	router.Get("/logout", auth.Logout)
 	router.Get("/refresh", auth.Refresh)
 
-	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
-	log.Printf("Startup Webserver on \"%s\"", httpListen)
+	router.Get("/wake/{deviceName}", wakeUpWithDeviceName)
+	router.Get("/wake/{deviceName}/", wakeUpWithDeviceName)
 
+	router.Route("/wake/{deviceName}", func(r chi.Router) { r.Get("/", wakeUpWithDeviceName) })
+
+	router.Post("/data/save", saveData)
+	router.Get("/data/get", getData)
+
+	router.Get("/health", checkHealth)
+
+	//router.PathPrefix(basePath + "/static/").Handler(http.StripPrefix(basePath+"/static/", http.FileServer(http.Dir("./static"))))
+	router.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
+
+	log.Printf("starting webserver on \"%s\"", httpListen)
 	log.Fatal(http.ListenAndServe(httpListen, router))
 }
 
@@ -62,5 +76,4 @@ func loadConfig() {
 		log.Fatalf("Error loading config.json file. \"%s\"", err)
 	}
 	log.Printf("Application configuratrion loaded from config.json")
-
 }

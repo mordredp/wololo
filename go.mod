@@ -7,10 +7,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 )
 
-require (
-	github.com/google/uuid v1.3.0
-	github.com/gorilla/mux v1.8.0
-)
+require github.com/google/uuid v1.3.0
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect

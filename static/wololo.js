@@ -12,16 +12,16 @@ $(document).ready(function () {
         }
         $('#snackbar').show();
 
-        // After 2 seconds, hide the Div Again
+        // After 3 seconds, hide the Div Again
         setTimeout(function () {
             $('#snackbar').hide();
-        }, 2000);
+        }, 3000);
     };
 
     jQuery.wakeUpDeviceByName = function (deviceName) {
         $.ajax({
             type: "GET",
-            url: (vDir == "/" ? "" : vDir) + "/wake/" + deviceName,
+            url: "/wake/" + deviceName,
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (data) {
@@ -40,14 +40,14 @@ $(document).ready(function () {
 
 function getAppData() {
 
-    $.getJSON((vDir == "/" ? "" : vDir) + "/data/get", function (data) {
+    $.getJSON("/data/get", function (data) {
         window.appData = data;
         if (!appData.devices) {
             appData.devices = [];
         }
         renderData();
     }).fail(function (data) {
-        alert("Error: Problem with getting data from the service.");
+        alert("couldn't retrieve the data from the API");
     });
 
 }
@@ -63,8 +63,8 @@ function renderData() {
         _createInsertButton: function () {
             var grid = this._grid;
             return $("<button>").addClass("btn btn-dark btn-sm")
-                .attr({ type: "button", title: "Add this device to the list." })
-                .html("<i class=\"fas fa-save\"></i>SAVE")
+                .attr({ type: "button", title: "add this device to the list." })
+                .html("<i class=\"fas fa-save\"></i>save")
                 .on("click", function () {
                     grid.insertItem().done(function () {
                         grid.clearInsert();
@@ -111,10 +111,10 @@ function renderData() {
     var gridFields = [];
     var gridWidth = "700px";
 
-    gridFields.push({ name: "name", title: "Device", type: "text", width: 150, validate: { validator: "required", message: "Device name is a required field." } });
-    gridFields.push({ name: "mac", title: "MAC Adress", type: "text", width: 150, validate: { validator: "pattern", param: /^[0-9a-f]{1,2}([\.:-])(?:[0-9a-f]{1,2}\1){4}[0-9a-f]{1,2}$/gmi, message: "MAC Address is a required field." } });
+    gridFields.push({ name: "name", title: "device", type: "text", width: 150, validate: { validator: "required", message: "device name is a required field." } });
+    gridFields.push({ name: "mac", title: "MAC Address", type: "text", width: 150, validate: { validator: "pattern", param: /^[0-9a-f]{1,2}([\.:-])(?:[0-9a-f]{1,2}\1){4}[0-9a-f]{1,2}$/gmi, message: "MAC address is a required field." } });
     gridFields.push({
-        name: "ip", title: "Broadcast IP", type: "text", width: 150, validate: { validator: "required", message: "Broadcast IP Address is a required field." },
+        name: "ip", title: "broadcast IP", type: "text", width: 150, validate: { validator: "required", message: "broadcast IP address is a required field." },
         insertTemplate: function () {
             var $result = jsGrid.fields.text.prototype.insertTemplate.call(this); // original input
             // $result.attr("disabled", true).css("background", "lightgray").val(bCastIP);
@@ -127,8 +127,8 @@ function renderData() {
         name: "command", type: "control", width: 125, modeSwitchButton: false,
         itemTemplate: function (value, item) {
             return $("<button>").addClass("btn btn-primary btn-sm")
-                .attr({ type: "button", title: "Send magic packet" })
-                .html("<i class=\"fas fa-bolt\"></i>WAKE-UP")
+                .attr({ type: "button", title: "send magic packet" })
+                .html("<i class=\"fas fa-bolt\"></i>wake")
                 .on("click", function () {
                     $.wakeUpDeviceByName(item.name)
                 });
@@ -142,8 +142,8 @@ function renderData() {
             var grid = this._grid;
             var isInserting = grid.inserting;
             var $button = $("<button>").addClass("btn btn-info btn-sm device-insert-button")
-                .attr({ type: "button", title: "Add new Device" })
-                .html("<i class=\"fas fa-plus\"></i>NEW")
+                .attr({ type: "button", title: "sdd new Device" })
+                .html("<i class=\"fas fa-plus\"></i>new")
                 .on("click", function () {
                     isInserting = !isInserting;
                     grid.option("inserting", isInserting);
@@ -160,7 +160,7 @@ function renderData() {
         inserting: false,
         sorting: false,
         confirmDeleting: true,
-        deleteConfirm: "Are you sure you want to delete this Device?",
+        deleteConfirm: "are you sure you want to delete this device?",
         data: appData.devices,
         fields: gridFields,
         rowClick: function (args) {
@@ -177,7 +177,7 @@ function saveAppData() {
 
     $.ajax({
         type: "POST",
-        url: (vDir == "/" ? "" : vDir) + "/data/save",
+        url: "/data/save",
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         data: JSON.stringify(appData),

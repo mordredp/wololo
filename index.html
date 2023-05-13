@@ -1,7 +1,7 @@
 <html>
 
 <head>
-  <title>Wake-on-lan Web</title>
+  <title>wololo</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
@@ -15,33 +15,33 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-12" role="main">
-        <h1 class="mb-4 mt-4"><span class="fas fa-power-off"></span> Wake-on-Lan Web Interface<small></h1>
+        <h1 class="mb-4 mt-4"><span class="fas fa-power-off"></span> wololo wake-on-lan web interface<small></h1>
         <div id="snackbar" class="alert hideMe">
-          Message comes here
+          message here
         </div>
         <div id="GridDevices"></div>
         <hr>
         <p>
-        <h3>Wake-up directly using HTTP Request</h3>
+        <h3>wake directly using an HTTP request</h3>
         <b>/wake/<span class="text-info">&lt;DeviceName&gt;</span></b>
 
-        <b>Returns a JSON Object</b>
+        <b>returns a JSON object</b>
         <p>
         <pre>
 {
   "success":true,
-  "message":"Sent magic packet to device Server with Mac 34:E6:D7:33:12:71 on Broadcast IP 192.168.1.255:9",
+  "message":"Sent magic packet with MAC 34:E6:D7:33:12:71 on Broadcast IP 192.168.1.255:9",
   "error":null
 }
         </pre>
         </p>
         <dl class="dl-horizontal">
           <dt>success</dt>
-          <dd>True or False if the WakeOnLan packet was send</dd>
+          <dd>true if the packet was sent, false otherwise</dd>
           <dt>message</dt>
-          <dd>Message as string what happen</dd>
+          <dd>action result message</dd>
           <dt>error</dt>
-          <dd>Encoded Jsonobject from GOLANG Error Object</dd>
+          <dd>JSON representation of the error</dd>
         </dl>
         </p>
         <hr>
@@ -52,6 +52,9 @@
         <p class="m-0">
           <small>Built with <span class="fa fa-heart text-danger" aria-hidden="true"></span> by mordredp, <span
               class="fab fa-github"></span> <a href="https://github.com/mordredp">https://github.com/mordredp</a></small>
+        </p>
+        <p class="m-0">
+          <small class="ml-2"><i class="fas fa-code-branch m-1"></i> from mordredp's project <a href="https://github.com/mordredp/wololo">https://github.com/mordredp/wololo</a></small>
         </p>
         <p class="m-0">
           <small class="ml-2"><i class="fas fa-code-branch m-1"></i> from Sameer Dhoot's project <a href="https://github.com/sameerdhoot/wolweb">https://github.com/sameerdhoot/wolweb</a></small>

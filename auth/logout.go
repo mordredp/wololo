@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"time"
 )
@@ -11,14 +12,12 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	c, err := r.Cookie("session_token")
 	if err != nil {
 		if err == http.ErrNoCookie {
-			// if the cookie is not set, return an unauthorized status
 			//w.WriteHeader(http.StatusUnauthorized)
 			http.Redirect(w, r, "/", http.StatusFound)
 
 			return
 		}
 
-		// for any other type of error, return a bad request status
 		//w.WriteHeader(http.StatusBadRequest)
 		http.Redirect(w, r, "/", http.StatusFound)
 
@@ -26,12 +25,10 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := c.Value
 
-	// remove the users session from the session map
 	delete(sessions, sessionToken)
 
-	// we let the client know that the cookie is expired
-	// by setting the session token to an empty value
-	// and its expiry as the current time
+	log.Printf("user \"%s\" logged out", r.Context().Value(UserKey).(User).ID)
+
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",
 		Value:   "",
