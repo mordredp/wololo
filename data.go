@@ -12,12 +12,12 @@ func loadData() {
 
 	devicesFile, err := os.Open("devices.json")
 	if err != nil {
-		log.Fatalf("error loading definitions: \"%s\"", err)
+		log.Fatalf("error loading definitions: %q", err)
 	}
 	devicesDecoder := json.NewDecoder(devicesFile)
 	err = devicesDecoder.Decode(&appData)
 	if err != nil {
-		log.Fatalf("error decoding definitions: \"%s\"", err)
+		log.Fatalf("error decoding definitions: %q", err)
 	}
 	log.Printf("%d definitions loaded", len(appData.Devices))
 }
@@ -25,7 +25,7 @@ func loadData() {
 func saveData(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
-	var result HTTPResponseObject
+	var result Response
 
 	log.Printf("saving application data ...")
 	err := json.NewDecoder(r.Body).Decode(&appData)

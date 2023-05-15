@@ -6,20 +6,20 @@ import (
 	"time"
 )
 
-// Clean removes expired sessions
-func Clean(next http.Handler) http.Handler {
+// Clear removes expired sessions.
+func (a *Authenticator) Clear(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if time.Now().After(lastCleanup.Add(maxSessionLength / 2)) {
+		if time.Now().After(a.lastCleanup.Add(a.maxSessionLength / 2)) {
 
 			deletedCount := 0
-			for id, session := range sessions {
+			for id, session := range a.sessions {
 				if session.isExpired() {
-					delete(sessions, id)
+					delete(a.sessions, id)
 					deletedCount++
 				}
 			}
-			lastCleanup = time.Now()
+			a.lastCleanup = time.Now()
 
 			log.Printf("removed %d expired sessions", deletedCount)
 		}

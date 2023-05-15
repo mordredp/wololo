@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-// Logout removes a session
-func Logout(w http.ResponseWriter, r *http.Request) {
+// Logout removes a session.
+func (a *Authenticator) Logout(w http.ResponseWriter, r *http.Request) {
 
 	c, err := r.Cookie("session_token")
 	if err != nil {
@@ -25,9 +25,9 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 	}
 	sessionToken := c.Value
 
-	delete(sessions, sessionToken)
+	delete(a.sessions, sessionToken)
 
-	log.Printf("user \"%s\" logged out", r.Context().Value(UserKey).(User).ID)
+	log.Printf("user %q logged out", r.Context().Value(UserKey).(User).ID)
 
 	http.SetCookie(w, &http.Cookie{
 		Name:    "session_token",

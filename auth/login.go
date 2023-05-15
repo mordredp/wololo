@@ -8,27 +8,25 @@ import (
 	"github.com/google/uuid"
 )
 
-// Login authenticates the session assigned to a user
-func Login(w http.ResponseWriter, r *http.Request) {
+// Login authenticates the session assigned to a user.
+func (a *Authenticator) Login(w http.ResponseWriter, r *http.Request) {
 
-	creds := Credentials{
+	c := Credentials{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
 	}
-	expectedPassword := "code"
 
-	if creds.Password != expectedPassword {
-
-		//w.WriteHeader(http.StatusUnauthorized)
+	if err := a.provider.Authenticate(c.Username, c.Password); err != nil {
+		log.Printf("provider error: %s", err.Error())
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
 	sessionToken := uuid.NewString()
-	expiresAt := time.Now().Add(maxSessionLength)
+	expiresAt := time.Now().Add(a.maxSessionLength)
 
-	sessions[sessionToken] = session{
-		ID:     creds.Username,
+	a.sessions[sessionToken] = session{
+		ID:     c.Username,
 		expiry: expiresAt,
 	}
 
@@ -38,7 +36,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Expires: expiresAt,
 	})
 
-	log.Printf("user \"%s\" logged in", creds.Username)
+	log.Printf("user %q logged in", c.Username)
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }

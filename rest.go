@@ -1,5 +1,3 @@
-// Rest API Implementations
-
 package main
 
 import (
@@ -10,17 +8,14 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// restWakeUpWithDeviceName - REST Handler for Processing URLS /virtualdirectory/apipath/<deviceName>
+// wakeUpWithDeviceName - REST Handler for Processing URLS /virtualdirectory/apipath/<deviceName>
 func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 
-	//vars := mux.Vars(r)
-	//deviceName := vars["deviceName"]
 	deviceName := chi.URLParam(r, "deviceName")
 
-	var result HTTPResponseObject
-	result.Success = false
+	var result Response
 
 	// Ensure deviceName is not empty
 	if deviceName == "" {
@@ -35,7 +30,7 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 			if c.Name == deviceName {
 
 				// We found the Devicename
-				if err := SendMagicPacket(c.Mac, c.BroadcastIP, ""); err != nil {
+				if err := SendMagicPacket(c.MAC, c.BroadcastIP, ""); err != nil {
 					// We got an internal Error on SendMagicPacket
 					w.WriteHeader(http.StatusInternalServerError)
 					result.Success = false
@@ -44,7 +39,7 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 				} else {
 					// Horray we send the WOL Packet succesfully
 					result.Success = true
-					result.Message = fmt.Sprintf("sent magic packet to device %s with MAC %s on broadcast IP %s", c.Name, c.Mac, c.BroadcastIP)
+					result.Message = fmt.Sprintf("sent magic packet to device %q with MAC %q on broadcast IP %q", c.Name, c.MAC, c.BroadcastIP)
 					result.ErrorObject = nil
 				}
 			}
@@ -53,7 +48,7 @@ func wakeUpWithDeviceName(w http.ResponseWriter, r *http.Request) {
 		if !result.Success && result.ErrorObject == nil {
 			// We could not find the Devicename
 			w.WriteHeader(http.StatusNotFound)
-			result.Message = fmt.Sprintf("device name %s could not be found", deviceName)
+			result.Message = fmt.Sprintf("device name %q could not be found", deviceName)
 		}
 	}
 	json.NewEncoder(w).Encode(result)

@@ -1,43 +1,61 @@
 package auth
 
 import (
-	"context"
-	"net/http"
+	"log"
+	"text/template"
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/mordredp/wololo/ldap"
 )
 
-// Identify retrieves a session or creates a new one
-func Identify(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+// Authenticator manages sessions and authentication providers.
+type Authenticator struct {
+	sessions         map[string]session
+	maxSessionLength time.Duration
+	lastCleanup      time.Time
+	tpl              *template.Template
+	provider         Provider
+}
 
-		c, err := r.Cookie("session_token")
+// LDAP is a functional option that instantiates an LDAP provider
+// for the Authenticator
+func LDAP(addr string, baseDN string, username string, password string) func(a *Authenticator) error {
+	return func(a *Authenticator) error {
 
-		var sessionToken string
+		ldap, err := ldap.NewDirectory(
+			addr,
+			baseDN,
+			ldap.Bind(username, password))
 
-		switch err {
-		case nil:
-			sessionToken = c.Value
-
-		case http.ErrNoCookie:
-			sessionToken := uuid.NewString()
-			expiresAt := time.Now().Add(maxSessionLength)
-
-			http.SetCookie(w, &http.Cookie{
-				Name:    "session_token",
-				Value:   sessionToken,
-				Expires: expiresAt,
-			})
-
-		default:
-			w.WriteHeader(http.StatusBadRequest)
-			return
+		if err != nil {
+			return err
 		}
 
-		user := userOrNew(sessionToken)
+		a.provider = ldap
+		log.Printf("LDAP provider on %q with base DN %q", addr, baseDN)
 
-		ctx := context.WithValue(r.Context(), UserKey, user)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+		return nil
+	}
+}
+
+// New initializes a new Authenticator. The initialization fails if any
+// functional option returns an error.
+func New(sessionSeconds int, options ...func(*Authenticator) error) (*Authenticator, error) {
+
+	a := Authenticator{
+		sessions:         make(map[string]session),
+		maxSessionLength: time.Duration(sessionSeconds) * time.Second,
+		lastCleanup:      time.Now(),
+		tpl:              template.Must(template.ParseGlob("auth/templates/*.gohtml")),
+		provider:         &nullProvider{},
+	}
+
+	for _, option := range options {
+		err := option(&a)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &a, nil
 }

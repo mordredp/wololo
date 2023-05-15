@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"log"
 	"net"
 	"regexp"
@@ -32,13 +33,13 @@ type MagicPacket struct {
 // contains 6 bytes of 0xFF followed by 16 repetitions of a given mac address.
 func NewMagicPacket(mac string) (*MagicPacket, error) {
 	var packet MagicPacket
-	var macAddr MACAddress
+	var address MACAddress
 
 	// We only support 6 byte MAC addresses since it is much harder to use
 	// the binary.Write(...) interface when the size of the MagicPacket is
 	// dynamic.
 	if !reMAC.MatchString(mac) {
-		return nil, errors.New("MAC address " + mac + " is not valid.")
+		return nil, fmt.Errorf("MAC address %q is not valid", mac)
 	}
 
 	hwAddr, err := net.ParseMAC(mac)
@@ -48,8 +49,8 @@ func NewMagicPacket(mac string) (*MagicPacket, error) {
 
 	// Copy bytes from the returned HardwareAddr -> a fixed size
 	// MACAddress
-	for idx := range macAddr {
-		macAddr[idx] = hwAddr[idx]
+	for idx := range address {
+		address[idx] = hwAddr[idx]
 	}
 
 	// Setup the header which is 6 repetitions of 0xFF
@@ -59,7 +60,7 @@ func NewMagicPacket(mac string) (*MagicPacket, error) {
 
 	// Setup the payload which is 16 repetitions of the MAC addr
 	for idx := range packet.payload {
-		packet.payload[idx] = macAddr
+		packet.payload[idx] = address
 	}
 
 	return &packet, nil
@@ -76,7 +77,7 @@ func GetIPFromInterface(iface string) (*net.UDPAddr, error) {
 	if err != nil {
 		return nil, err
 	} else if len(addrs) <= 0 {
-		return nil, errors.New("no address associated with interface " + iface)
+		return nil, fmt.Errorf("no address associated with interface %q", iface)
 	}
 
 	// Validate that one of the addr's is a valid network IP address
@@ -91,7 +92,7 @@ func GetIPFromInterface(iface string) (*net.UDPAddr, error) {
 			}
 		}
 	}
-	return nil, errors.New("unable to find valid IP addr for interface " + iface)
+	return nil, fmt.Errorf("no valid IP address for interface %q", iface)
 }
 
 // SendMagicPacket to send a magic packet to a given mac address, and optionally
@@ -106,12 +107,12 @@ func SendMagicPacket(macAddr, bcastAddr, iface string) error {
 	// Fill our byte buffer with the bytes in our MagicPacket
 	var buf bytes.Buffer
 	binary.Write(&buf, binary.BigEndian, magicPacket)
-	log.Printf("sending magic packet to MAC %s on %s", macAddr, bcastAddr)
+	log.Printf("sending magic packet to MAC %q on %q", macAddr, bcastAddr)
 
 	// Get a UDPAddr to send the broadcast to
 	udpAddr, err := net.ResolveUDPAddr("udp", bcastAddr)
 	if err != nil {
-		log.Printf("unable to get a UDP address for %s", bcastAddr)
+		log.Printf("no UDP address for %q", bcastAddr)
 		return err
 	}
 
@@ -122,7 +123,7 @@ func SendMagicPacket(macAddr, bcastAddr, iface string) error {
 		localAddr, err = GetIPFromInterface(iface)
 		if err != nil {
 			log.Printf("ERROR: %s", err.Error())
-			return errors.New("unable to get address for interface " + iface)
+			return fmt.Errorf("unable to get address for interface %q", iface)
 		}
 	}
 

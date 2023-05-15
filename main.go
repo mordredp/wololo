@@ -27,16 +27,28 @@ func main() {
 	loadData()
 
 	router := chi.NewRouter()
+	authenticator, err := auth.New(
+		120,
+		auth.LDAP(
+			appConfig.LDAPAddr,
+			appConfig.LDAPBaseDN,
+			appConfig.LDAPBindUser,
+			appConfig.LDAPBindPass))
+
+	if err != nil {
+		log.Fatalf(err.Error())
+	}
 
 	router.Use(middleware.Logger)
-	router.Use(auth.Identify)
-	router.Use(auth.Clean)
+
+	router.Use(authenticator.Identify)
+	router.Use(authenticator.Clear)
 
 	router.Get("/", renderHomePage)
 
-	router.Post("/login", auth.Login)
-	router.Get("/logout", auth.Logout)
-	router.Get("/refresh", auth.Refresh)
+	router.Post("/login", authenticator.Login)
+	router.Get("/logout", authenticator.Logout)
+	router.Get("/refresh", authenticator.Refresh)
 
 	router.Get("/wake/{deviceName}", wakeUpWithDeviceName)
 	router.Get("/wake/{deviceName}/", wakeUpWithDeviceName)
@@ -53,7 +65,7 @@ func main() {
 
 	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
 
-	log.Printf("starting webserver on \"%s\"", httpListen)
+	log.Printf("starting webserver on %q", httpListen)
 	log.Fatal(http.ListenAndServe(httpListen, router))
 }
 
@@ -61,11 +73,11 @@ func setWorkingDir() {
 
 	thisApp, err := os.Executable()
 	if err != nil {
-		log.Fatalf("Error determining the directory. \"%s\"", err)
+		log.Fatalf("error determining the executable directory: %s", err)
 	}
 	appPath := filepath.Dir(thisApp)
 	os.Chdir(appPath)
-	log.Printf("Set working directory: %s", appPath)
+	log.Printf("set working directory: %q", appPath)
 
 }
 
@@ -73,7 +85,7 @@ func loadConfig() {
 
 	err := cleanenv.ReadConfig("config.json", &appConfig)
 	if err != nil {
-		log.Fatalf("Error loading config.json file. \"%s\"", err)
+		log.Fatalf("error loading configuration file: %s", err)
 	}
-	log.Printf("Application configuratrion loaded from config.json")
+	log.Printf("configuration loaded")
 }
