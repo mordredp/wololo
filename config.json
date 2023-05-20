@@ -2,6 +2,7 @@
     "ip" : "0.0.0.0",
     "port": 8089,
     "bcastip": "192.168.1.255:9",
+    "staticpass": "test",
     "ldapaddr": "ldap://192.168.178.31:389",
     "ldapbasedn": "dc=sirius,dc=com",
     "ldapbinduser": "cn=admin,dc=sirius,dc=com",

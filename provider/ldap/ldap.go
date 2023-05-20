@@ -42,9 +42,9 @@ func Bind(username string, password string) func(d *directory) error {
 	}
 }
 
-// Fields is a functional option that sets parameters for the LDAP filter.
-// It sets both the value for the parameter "objectClass"
-// and the key name for the username
+// Fields is a functional option that sets some parameters for the LDAP filter.
+// classValue sets the value for the parameter "objectClass"
+// and idKey sets the name of the field to use for identification.
 func Fields(classValue string, idKey string) func(d *directory) {
 	return func(d *directory) {
 		d.classValue = classValue

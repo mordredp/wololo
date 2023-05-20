@@ -15,8 +15,8 @@ import (
 )
 
 // Global variables
-var appConfig AppConfig
-var appData AppData
+var appConfig Config
+var appData Data
 
 func main() {
 
@@ -27,17 +27,17 @@ func main() {
 	loadData()
 
 	router := chi.NewRouter()
-	authenticator, err := auth.New(
+	//loginRouter := chi.NewRouter()
+
+	authenticator := auth.New(
 		120,
+		auth.Static(appConfig.StaticPass),
 		auth.LDAP(
 			appConfig.LDAPAddr,
 			appConfig.LDAPBaseDN,
 			appConfig.LDAPBindUser,
-			appConfig.LDAPBindPass))
-
-	if err != nil {
-		log.Fatalf(err.Error())
-	}
+			appConfig.LDAPBindPass),
+	)
 
 	router.Use(middleware.Logger)
 
@@ -49,9 +49,6 @@ func main() {
 	router.Post("/login", authenticator.Login)
 	router.Get("/logout", authenticator.Logout)
 	router.Get("/refresh", authenticator.Refresh)
-
-	router.Get("/wake/{deviceName}", wakeUpWithDeviceName)
-	router.Get("/wake/{deviceName}/", wakeUpWithDeviceName)
 
 	router.Route("/wake/{deviceName}", func(r chi.Router) { r.Get("/", wakeUpWithDeviceName) })
 

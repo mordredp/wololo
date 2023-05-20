@@ -14,16 +14,17 @@ type Device struct {
 	BroadcastIP string `json:"ip"`
 }
 
-// AppData is list of Computer objects defined in JSON config file.
-type AppData struct {
+// Data is list of Computer objects defined in JSON config file.
+type Data struct {
 	Devices []Device `json:"devices"`
 }
 
-// AppConfig represents a configuration object to initialize this application.
-type AppConfig struct {
+// Config represents a configuration object to initialize this application.
+type Config struct {
 	IP           string `json:"ip" env:"WOLOLOIP" env-default:"0.0.0.0"`
 	Port         int    `json:"port" env:"WOLOLOPORT" env-default:"8089"`
 	BCastIP      string `json:"bcastip" env:"WOLOLOBCASTIP" env-default:"192.168.1.255:9"`
+	StaticPass   string `json:"staticpass"`
 	LDAPAddr     string `json:"ldapaddr"`
 	LDAPBaseDN   string `json:"ldapbasedn"`
 	LDAPBindUser string `json:"ldapbinduser"`

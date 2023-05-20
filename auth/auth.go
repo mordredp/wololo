@@ -5,7 +5,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/mordredp/wololo/ldap"
+	"github.com/mordredp/wololo/provider"
+	"github.com/mordredp/wololo/provider/ldap"
 )
 
 // Authenticator manages sessions and authentication providers.
@@ -14,11 +15,11 @@ type Authenticator struct {
 	maxSessionLength time.Duration
 	lastCleanup      time.Time
 	tpl              *template.Template
-	provider         Provider
+	providers        []provider.Provider
 }
 
 // LDAP is a functional option that instantiates an LDAP provider
-// for the Authenticator
+// for the Authenticator.
 func LDAP(addr string, baseDN string, username string, password string) func(a *Authenticator) error {
 	return func(a *Authenticator) error {
 
@@ -31,31 +32,42 @@ func LDAP(addr string, baseDN string, username string, password string) func(a *
 			return err
 		}
 
-		a.provider = ldap
-		log.Printf("LDAP provider on %q with base DN %q", addr, baseDN)
+		a.providers = append(a.providers, ldap)
+		log.Printf("configured LDAP provider on %q with base DN %q", addr, baseDN)
 
 		return nil
 	}
 }
 
-// New initializes a new Authenticator. The initialization fails if any
-// functional option returns an error.
-func New(sessionSeconds int, options ...func(*Authenticator) error) (*Authenticator, error) {
+// Static is a functional option that instantiates a Static provider
+// for the Authenticator.
+func Static(password string) func(a *Authenticator) error {
+	return func(a *Authenticator) error {
+		a.providers = append(a.providers, provider.Static(password))
+		log.Printf("configured Static provider ")
+
+		return nil
+	}
+}
+
+// New initializes a new Authenticator.
+func New(sessionSeconds int, options ...func(*Authenticator) error) *Authenticator {
 
 	a := Authenticator{
 		sessions:         make(map[string]session),
 		maxSessionLength: time.Duration(sessionSeconds) * time.Second,
 		lastCleanup:      time.Now(),
 		tpl:              template.Must(template.ParseGlob("auth/templates/*.gohtml")),
-		provider:         &nullProvider{},
+		providers:        make([]provider.Provider, 0),
 	}
 
 	for _, option := range options {
 		err := option(&a)
 		if err != nil {
-			return nil, err
+			log.Printf("options: %s", err)
+			continue
 		}
 	}
 
-	return &a, nil
+	return &a
 }
