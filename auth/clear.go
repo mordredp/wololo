@@ -7,7 +7,7 @@ import (
 )
 
 // Clear removes expired sessions.
-func (a *Authenticator) Clear(next http.Handler) http.Handler {
+func (a *authenticator) Clear(next http.Handler) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if time.Now().After(a.lastCleanup.Add(a.maxSessionLength / 2)) {

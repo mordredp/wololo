@@ -48,13 +48,9 @@ func saveData(w http.ResponseWriter, r *http.Request) {
 		log.Printf("data saved")
 	}
 	json.NewEncoder(w).Encode(result)
-
 }
 
 func getData(w http.ResponseWriter, r *http.Request) {
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(appData)
-	log.Printf("data sent")
-
 }

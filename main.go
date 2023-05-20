@@ -27,7 +27,7 @@ func main() {
 	loadData()
 
 	router := chi.NewRouter()
-	//loginRouter := chi.NewRouter()
+	authRouter := chi.NewRouter()
 
 	authenticator := auth.New(
 		120,
@@ -44,26 +44,29 @@ func main() {
 	router.Use(authenticator.Identify)
 	router.Use(authenticator.Clear)
 
+	authRouter.Use(authenticator.Authorize)
+
 	router.Get("/", renderHomePage)
-
 	router.Post("/login", authenticator.Login)
-	router.Get("/logout", authenticator.Logout)
-	router.Get("/refresh", authenticator.Refresh)
-
-	router.Route("/wake/{deviceName}", func(r chi.Router) { r.Get("/", wakeUpWithDeviceName) })
-
-	router.Post("/data/save", saveData)
-	router.Get("/data/get", getData)
-
 	router.Get("/health", checkHealth)
 
+	authRouter.Get("/logout", authenticator.Logout)
+	authRouter.Get("/refresh", authenticator.Refresh)
+
+	authRouter.Route("/wake/{deviceName}", func(r chi.Router) { r.Get("/", wakeUpWithDeviceName) })
+
+	authRouter.Post("/data/save", saveData)
+	authRouter.Get("/data/get", getData)
+
 	//router.PathPrefix(basePath + "/static/").Handler(http.StripPrefix(basePath+"/static/", http.FileServer(http.Dir("./static"))))
-	router.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	authRouter.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	httpListen := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
+	router.Mount("/", authRouter)
 
-	log.Printf("starting webserver on %q", httpListen)
-	log.Fatal(http.ListenAndServe(httpListen, router))
+	address := appConfig.IP + ":" + strconv.Itoa(appConfig.Port)
+
+	log.Printf("starting webserver on %q", address)
+	log.Fatal(http.ListenAndServe(address, router))
 }
 
 func setWorkingDir() {

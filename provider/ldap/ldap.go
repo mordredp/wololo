@@ -19,39 +19,6 @@ type directory struct {
 	idKey      string
 }
 
-// Bind is a functional option that verifies both the connection
-// and bind status to a directory with the credentials provided to it.
-func Bind(username string, password string) func(d *directory) error {
-	return func(d *directory) error {
-		conn, err := ldap.DialURL(d.bindAddr.String())
-		if err != nil {
-			return err
-		}
-
-		defer conn.Close()
-
-		err = conn.StartTLS(&tls.Config{InsecureSkipVerify: true})
-		if err != nil {
-			return err
-		}
-
-		d.bindUser = username
-		d.bindPass = password
-
-		return conn.Bind(d.bindUser, d.bindPass)
-	}
-}
-
-// Fields is a functional option that sets some parameters for the LDAP filter.
-// classValue sets the value for the parameter "objectClass"
-// and idKey sets the name of the field to use for identification.
-func Fields(classValue string, idKey string) func(d *directory) {
-	return func(d *directory) {
-		d.classValue = classValue
-		d.idKey = idKey
-	}
-}
-
 // NewDirectory initializes an ldap client. The initialization fails if any
 // functional option returns an error.
 func NewDirectory(addr string, baseDN string, options ...func(*directory) error) (*directory, error) {
@@ -80,7 +47,7 @@ func NewDirectory(addr string, baseDN string, options ...func(*directory) error)
 
 // Authenticate returns an error if the username is not found within
 // the directory or the username does not bind to it with the provided password.
-func (d directory) Authenticate(username string, password string) error {
+func (d *directory) Authenticate(username string, password string) error {
 
 	conn, err := ldap.DialURL(d.bindAddr.String())
 	if err != nil {

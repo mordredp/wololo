@@ -8,9 +8,9 @@ import (
 )
 
 // Refresh renews the session token expiration for valid tokens.
-func (a *Authenticator) Refresh(w http.ResponseWriter, r *http.Request) {
+func (a *authenticator) Refresh(w http.ResponseWriter, r *http.Request) {
 
-	c, err := r.Cookie("session_token")
+	c, err := r.Cookie(a.cookieName)
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -32,6 +32,8 @@ func (a *Authenticator) Refresh(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	delete(a.sessions, sessionToken)
+
 	newSessionToken := uuid.NewString()
 	expiresAt := time.Now().Add(a.maxSessionLength)
 
@@ -40,11 +42,10 @@ func (a *Authenticator) Refresh(w http.ResponseWriter, r *http.Request) {
 		expiry: expiresAt,
 	}
 
-	delete(a.sessions, sessionToken)
-
 	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   newSessionToken,
-		Expires: time.Now().Add(a.maxSessionLength),
+		Name:     a.cookieName,
+		Value:    newSessionToken,
+		Expires:  expiresAt,
+		SameSite: http.SameSiteStrictMode,
 	})
 }

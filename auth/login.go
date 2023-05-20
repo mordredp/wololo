@@ -8,13 +8,12 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/mordredp/wololo/provider"
 )
 
 // Login authenticates the session assigned to a user.
 // It tries to authenticate the session on all providers configured,
 // and returns as soon as the first one succeeds.
-func (a *Authenticator) Login(w http.ResponseWriter, r *http.Request) {
+func (a *authenticator) Login(w http.ResponseWriter, r *http.Request) {
 
 	c := Credentials{
 		Username: r.FormValue("username"),
@@ -22,16 +21,16 @@ func (a *Authenticator) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var err error = fmt.Errorf("no providers authenticated user %q", c.Username)
-	var good provider.Provider
+	var goodProvider string
 
-	for _, p := range a.providers {
+	for _, provider := range a.providers {
 
-		if err := p.Authenticate(c.Username, c.Password); err != nil {
+		if err := provider.Authenticate(c.Username, c.Password); err != nil {
 			log.Printf("provider: %s", err.Error())
 			continue
 		}
 
-		good = p
+		goodProvider = reflect.TypeOf(provider).String()
 		err = nil
 		break
 	}
@@ -51,12 +50,13 @@ func (a *Authenticator) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:    "session_token",
-		Value:   sessionToken,
-		Expires: expiresAt,
+		Name:     a.cookieName,
+		Value:    sessionToken,
+		Expires:  expiresAt,
+		SameSite: http.SameSiteStrictMode,
 	})
 
-	log.Printf("user %q logged in with %q", c.Username, reflect.TypeOf(good))
+	log.Printf("user %q logged in with %q", c.Username, goodProvider)
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
