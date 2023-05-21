@@ -19,8 +19,11 @@ type authenticator struct {
 	providers        []provider.Provider
 }
 
+// An Option modifies an authenticator or returns an error.
+type Option func(*authenticator) error
+
 // New initializes a new authenticator.
-func New(sessionSeconds int, options ...func(*authenticator) error) *authenticator {
+func New(sessionSeconds int, options ...Option) *authenticator {
 
 	a := authenticator{
 		sessions:         make(map[string]session),

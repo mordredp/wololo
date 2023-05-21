@@ -19,9 +19,12 @@ type directory struct {
 	idKey      string
 }
 
+// An Option modifies a directory or returns an error.
+type Option func(d *directory) error
+
 // NewDirectory initializes an ldap client. The initialization fails if any
-// functional option returns an error.
-func NewDirectory(addr string, baseDN string, options ...func(*directory) error) (*directory, error) {
+// option returns an error.
+func NewDirectory(addr string, baseDN string, options ...Option) (*directory, error) {
 
 	url, err := url.Parse(addr)
 	if err != nil {

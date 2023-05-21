@@ -14,15 +14,26 @@ import (
 	"github.com/mordredp/wololo/auth"
 )
 
-// Global variables
-var appConfig Config
-var appData Data
+var (
+	appConfig Config
+	appData   Data
+)
 
 func main() {
 
-	setWorkingDir()
+	executablePath, err := os.Executable()
+	if err != nil {
+		log.Fatalf("cannot determine the executable directory: %s", err)
+	}
+	workingDir := filepath.Dir(executablePath)
+	os.Chdir(workingDir)
+	log.Printf("set working directory: %q", workingDir)
 
-	loadConfig()
+	err = cleanenv.ReadConfig("config.json", &appConfig)
+	if err != nil {
+		log.Fatalf("error loading configuration file: %s", err)
+	}
+	log.Printf("configuration loaded")
 
 	loadData()
 
@@ -58,7 +69,9 @@ func main() {
 	authRouter.Post("/data/save", saveData)
 	authRouter.Get("/data/get", getData)
 
-	//router.PathPrefix(basePath + "/static/").Handler(http.StripPrefix(basePath+"/static/", http.FileServer(http.Dir("./static"))))
+	router.Get("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./static/favicon.ico")
+	})
 	authRouter.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
 	router.Mount("/", authRouter)
@@ -67,25 +80,4 @@ func main() {
 
 	log.Printf("starting webserver on %q", address)
 	log.Fatal(http.ListenAndServe(address, router))
-}
-
-func setWorkingDir() {
-
-	thisApp, err := os.Executable()
-	if err != nil {
-		log.Fatalf("error determining the executable directory: %s", err)
-	}
-	appPath := filepath.Dir(thisApp)
-	os.Chdir(appPath)
-	log.Printf("set working directory: %q", appPath)
-
-}
-
-func loadConfig() {
-
-	err := cleanenv.ReadConfig("config.json", &appConfig)
-	if err != nil {
-		log.Fatalf("error loading configuration file: %s", err)
-	}
-	log.Printf("configuration loaded")
 }
