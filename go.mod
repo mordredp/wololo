@@ -3,11 +3,14 @@ module github.com/mordredp/wololo
 go 1.20
 
 require (
-	github.com/go-ldap/ldap v3.0.3+incompatible
+	github.com/go-ldap/ldap v3.0.3+incompatible // indirect
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 )
 
-require github.com/google/uuid v1.3.0
+require (
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/mordredp/auth v0.0.0-20230521124534-3c888fe506ce
+)
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect

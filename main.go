@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/ilyakaznacheev/cleanenv"
 
-	"github.com/mordredp/wololo/auth"
+	"github.com/mordredp/auth"
 )
 
 var (

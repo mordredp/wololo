@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/mordredp/wololo/auth"
+	"github.com/mordredp/auth"
 )
 
 func renderHomePage(w http.ResponseWriter, r *http.Request) {
