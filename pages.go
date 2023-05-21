@@ -24,7 +24,7 @@ func renderHomePage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if !user.Authenticated {
-		tpl := template.Must(template.ParseGlob("auth/templates/*.gohtml"))
+		tpl := template.Must(template.ParseGlob("templates/*.gohtml"))
 		tpl.ExecuteTemplate(w, "index.gohtml", user)
 	} else {
 		tmpl, _ := template.ParseFiles("index.html")

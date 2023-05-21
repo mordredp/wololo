@@ -19,5 +19,6 @@ COPY --from=builder /wololo/wololo .
 COPY --from=builder /wololo/devices.json .
 COPY --from=builder /wololo/config.json .
 COPY --from=builder /wololo/static ./static
+COPY --from=builder /wololo/templates ./templates
 
 CMD ["/wololo/wololo"]

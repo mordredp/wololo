@@ -16,5 +16,7 @@ services:
 
     volumes:
       - ./devices.json:/wololo/devices.json
+      - ./static:/wololo/static
+      - ./templates:/wololo/templates
 
     network_mode: host

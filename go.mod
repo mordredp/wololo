@@ -9,13 +9,13 @@ require (
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/mordredp/auth v0.0.0-20230521124534-3c888fe506ce
+	github.com/mordredp/auth v1.0.0
 )
 
 require (
-	github.com/BurntSushi/toml v1.1.0 // indirect
+	github.com/BurntSushi/toml v1.2.1 // indirect
 	github.com/go-chi/chi/v5 v5.0.8
-	github.com/joho/godotenv v1.4.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
