@@ -3,7 +3,7 @@ FROM golang:1.20-alpine AS builder
 RUN mkdir /wololo
 WORKDIR /wololo
 
-# Install Dependecies
+# Install Dependencies
 RUN apk update && apk upgrade && \
     apk add --no-cache git && \
     git clone https://github.com/mordredp/wololo .

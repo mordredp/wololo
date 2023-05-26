@@ -12,6 +12,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 
 	"github.com/mordredp/auth"
+	"github.com/mordredp/auth/provider/ldap"
 )
 
 var (
@@ -47,7 +48,9 @@ func main() {
 			appConfig.LDAPAddr,
 			appConfig.LDAPBaseDN,
 			appConfig.LDAPBindUser,
-			appConfig.LDAPBindPass),
+			appConfig.LDAPBindPass,
+			ldap.Fields("organizationalPerson", "sAMAccountName"),
+		),
 	)
 
 	router.Use(middleware.Logger)
