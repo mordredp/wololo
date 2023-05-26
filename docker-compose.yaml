@@ -15,6 +15,7 @@ services:
       WOLOLOBCASTIP: "192.168.1.255:9"
 
     volumes:
+      - ./config.json:/wololo/config.json
       - ./devices.json:/wololo/devices.json
       - ./static:/wololo/static
       - ./templates:/wololo/templates
