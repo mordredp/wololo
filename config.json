@@ -6,5 +6,7 @@
     "ldapaddr": "ldap://192.168.178.31:389",
     "ldapbasedn": "dc=sirius,dc=com",
     "ldapbinduser": "cn=admin,dc=sirius,dc=com",
-    "ldapbindpass": "passw0rd"
+    "ldapbindpass": "passw0rd",
+    "ldapclassvalue": "organizationalPerson",
+    "ldapidkey": "sAMAccountName"
 }

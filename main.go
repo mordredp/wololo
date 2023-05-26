@@ -49,7 +49,7 @@ func main() {
 			appConfig.LDAPBaseDN,
 			appConfig.LDAPBindUser,
 			appConfig.LDAPBindPass,
-			ldap.Fields("organizationalPerson", "sAMAccountName"),
+			ldap.Fields(appConfig.LDAPClassValue, appConfig.LDAPIdKey),
 		),
 	)
 
