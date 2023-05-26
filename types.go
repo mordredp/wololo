@@ -21,14 +21,15 @@ type Data struct {
 
 // Config represents a configuration object to initialize this application.
 type Config struct {
-	IP             string `json:"ip" env:"WOLOLOIP" env-default:"0.0.0.0"`
-	Port           int    `json:"port" env:"WOLOLOPORT" env-default:"8089"`
-	BCastIP        string `json:"bcastip" env:"WOLOLOBCASTIP" env-default:"192.168.1.255:9"`
-	StaticPass     string `json:"staticpass"`
-	LDAPAddr       string `json:"ldapaddr"`
-	LDAPBaseDN     string `json:"ldapbasedn"`
-	LDAPBindUser   string `json:"ldapbinduser"`
-	LDAPBindPass   string `json:"ldapbindpass"`
-	LDAPClassValue string `json:"ldapclassvalue"`
-	LDAPIdKey      string `json:"ldapidkey"`
+	IP                string `json:"ip" env:"WOLOLOIP" env-default:"0.0.0.0"`
+	Port              int    `json:"port" env:"WOLOLOPORT" env-default:"8089"`
+	BCastIP           string `json:"bcastip" env:"WOLOLOBCASTIP" env-default:"192.168.1.255:9"`
+	MaxSessionSeconds int    `json:"maxsessionseconds"`
+	StaticPass        string `json:"staticpass"`
+	LDAPAddr          string `json:"ldapaddr"`
+	LDAPBaseDN        string `json:"ldapbasedn"`
+	LDAPBindUser      string `json:"ldapbinduser"`
+	LDAPBindPass      string `json:"ldapbindpass"`
+	LDAPClassValue    string `json:"ldapclassvalue"`
+	LDAPIdKey         string `json:"ldapidkey"`
 }
