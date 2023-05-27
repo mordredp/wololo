@@ -41,7 +41,7 @@ func main() {
 	router := chi.NewRouter()
 	authRouter := chi.NewRouter()
 
-	authenticator := auth.New(
+	authenticator := auth.NewAuthenticator(
 		appConfig.MaxSessionSeconds,
 		auth.Static(appConfig.StaticPass),
 		auth.LDAP(
@@ -65,7 +65,6 @@ func main() {
 	router.Get("/health", checkHealth)
 
 	authRouter.Get("/logout", authenticator.Logout)
-	authRouter.Get("/refresh", authenticator.Refresh)
 
 	authRouter.Route("/wake/{deviceName}", func(r chi.Router) { r.Get("/", wakeUpWithDeviceName) })
 

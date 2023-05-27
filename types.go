@@ -24,7 +24,7 @@ type Config struct {
 	IP                string `json:"ip" env:"WOLOLOIP" env-default:"0.0.0.0"`
 	Port              int    `json:"port" env:"WOLOLOPORT" env-default:"8089"`
 	BCastIP           string `json:"bcastip" env:"WOLOLOBCASTIP" env-default:"192.168.1.255:9"`
-	MaxSessionSeconds int    `json:"maxsessionseconds"`
+	MaxSessionSeconds int    `json:"maxsessionseconds" env-default:"600"`
 	StaticPass        string `json:"staticpass"`
 	LDAPAddr          string `json:"ldapaddr"`
 	LDAPBaseDN        string `json:"ldapbasedn"`
