@@ -12,6 +12,7 @@ import (
 	"github.com/ilyakaznacheev/cleanenv"
 
 	"github.com/mordredp/auth"
+	"github.com/mordredp/auth/provider"
 	"github.com/mordredp/auth/provider/ldap"
 )
 
@@ -47,8 +48,10 @@ func main() {
 		auth.LDAP(
 			appConfig.LDAPAddr,
 			appConfig.LDAPBaseDN,
-			appConfig.LDAPBindUser,
-			appConfig.LDAPBindPass,
+			provider.Credentials{
+				Username: appConfig.LDAPBindUser,
+				Password: appConfig.LDAPBindPass,
+			},
 			ldap.Fields(appConfig.LDAPClassValue, appConfig.LDAPIdKey),
 		),
 	)

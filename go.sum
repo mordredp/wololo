@@ -12,8 +12,8 @@ github.com/ilyakaznacheev/cleanenv v1.4.2/go.mod h1:i0owW+HDxeGKE0/JPREJOdSCPIyO
 github.com/joho/godotenv v1.4.0/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
-github.com/mordredp/auth v0.0.0-20230528095905-c7fa41e2e7c4 h1:sTIxwPZlONb3SaSJudDHPtKiK/XB49A8IRi6AYaTDWw=
-github.com/mordredp/auth v0.0.0-20230528095905-c7fa41e2e7c4/go.mod h1:mWcN1JBcGfAhxlfEqNaJDA4Z/d0pEzyDAim6wo1PbXE=
+github.com/mordredp/auth v0.0.0-20230528170046-255a230b126d h1:AnqsDQQpLkzCSN8rXEMf4t0XIbifvZLXXZ4/BY64M4U=
+github.com/mordredp/auth v0.0.0-20230528170046-255a230b126d/go.mod h1:mWcN1JBcGfAhxlfEqNaJDA4Z/d0pEzyDAim6wo1PbXE=
 github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d h1:TxyelI5cVkbREznMhfzycHdkp5cLA7DpE+GKjSslYhM=
