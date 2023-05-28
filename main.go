@@ -56,7 +56,6 @@ func main() {
 	router.Use(middleware.Logger)
 
 	router.Use(authenticator.Identify)
-	router.Use(authenticator.Clear)
 
 	authRouter.Use(authenticator.Authorize)
 

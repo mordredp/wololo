@@ -7,7 +7,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 )
 
-require github.com/mordredp/auth v0.0.0-20230527164002-fc5fed36a2c0
+require github.com/mordredp/auth v0.0.0-20230528095905-c7fa41e2e7c4
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
