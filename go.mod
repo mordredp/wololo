@@ -7,9 +7,9 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.4.2
 )
 
-require github.com/mordredp/auth v0.0.0-20230528170046-255a230b126d
-
 //replace github.com/mordredp/auth => ../auth
+
+require github.com/mordredp/auth v0.0.0-20230709160458-4c921aed0454
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
@@ -17,7 +17,7 @@ require (
 )
 
 require (
-	github.com/BurntSushi/toml v1.2.1 // indirect
+	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/joho/godotenv v1.5.1 // indirect
 	gopkg.in/asn1-ber.v1 v1.0.0-20181015200546-f715ec2f112d // indirect

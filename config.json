@@ -8,6 +8,8 @@
     "ldapbasedn": "dc=sirius,dc=com",
     "ldapbinduser": "cn=admin,dc=sirius,dc=com",
     "ldapbindpass": "passw0rd",
-    "ldapclassvalue": "organizationalPerson",
-    "ldapidkey": "sAMAccountName"
+    "ldapidkey": "sAMAccountName",
+    "ldapqueryparams": {
+        "objectClass" : "organizationalPerson"
+    }
 }

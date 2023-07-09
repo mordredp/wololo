@@ -52,7 +52,8 @@ func main() {
 				Username: appConfig.LDAPBindUser,
 				Password: appConfig.LDAPBindPass,
 			},
-			ldap.Fields(appConfig.LDAPClassValue, appConfig.LDAPIdKey),
+			ldap.IdKey(appConfig.LDAPIdKey),
+			ldap.QueryParams(appConfig.LDAPQueryParams),
 		),
 	)
 
