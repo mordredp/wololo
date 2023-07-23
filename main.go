@@ -43,7 +43,7 @@ func main() {
 	authRouter := chi.NewRouter()
 
 	authenticator := auth.NewAuthenticator(
-		appConfig.MaxSessionSeconds,
+		auth.MaxSessionLength(appConfig.MaxSessionSeconds),
 		auth.Static(appConfig.StaticPass),
 		auth.LDAP(
 			appConfig.LDAPAddr,

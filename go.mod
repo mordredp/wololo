@@ -9,7 +9,7 @@ require (
 
 //replace github.com/mordredp/auth => ../auth
 
-require github.com/mordredp/auth v0.0.0-20230709160458-4c921aed0454
+require github.com/mordredp/auth v0.0.0-20230723154909-747f874e29c4
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
